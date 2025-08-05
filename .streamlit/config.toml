@@ -1,0 +1,74 @@
+[global]
+
+# By default, Streamlit checks if the Python watchdog module is available and, if not,
+# prints a warning asking for you to install it. The watchdog module is not required,
+# it's just used to make the run automagically when you save a file. This option
+# allows you to suppress that warning.
+disableWatchdogWarning = false
+
+# By default, Streamlit displays a warning when a user sets both a widget default
+# value in the function defining the widget and a widget value via the widget's key
+# in `st.session_state`.
+showWarningOnDirectExecution = false
+
+[logger]
+
+# Level of logging: 'error', 'warning', 'info', or 'debug'.
+level = "info"
+
+[client]
+
+# Whether to enable st.cache.
+caching = true
+
+# If false, makes your Streamlit script not draw to a Streamlit app.
+displayEnabled = true
+
+# Controls whether uncaught app exceptions are displayed in the browser. By
+# default, this is set to True and Streamlit displays app exceptions and
+# associated tracebacks in the browser.
+showErrorDetails = true
+
+[browser]
+
+# Internet address where users should point their browsers in order to
+# connect to the app. Can be IP address or DNS name and path.
+serverAddress = "localhost"
+
+# Port where users can connect to the app.
+serverPort = 8501
+
+# The base path for the URL where Streamlit should be served from.
+gatherUsageStats = false
+
+[server]
+
+# List of folders that should not be watched for changes. This impacts both
+# "Run on Save" and @st.cache.
+folderWatchBlacklist = []
+
+# Change the type of file watcher used by Streamlit, or turn it off completely.
+fileWatcherType = "auto"
+
+# Symmetric key used to produce signed cookies. If deploying on multiple replicas,
+# this should be set to the same value across all replicas to ensure they all
+# share the same secret.
+cookieSecret = "a-random-key-here"
+
+# If false, will attempt to open a browser window on start.
+headless = false
+
+# Automatically rerun script when the file is modified on disk.
+runOnSave = true
+
+# The address where the server will listen for client and browser connections.
+address = "localhost"
+
+# The port where the server will listen for client and browser connections.
+port = 8501
+
+# Enables support for Cross-Origin Request Sharing (CORS) protection, for added security.
+enableCORS = false
+
+# Enables support for Cross-Site Request Forgery (XSRF) protection, for added security.
+enableXsrfProtection = true

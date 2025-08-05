@@ -1,0 +1,43 @@
+SCÉNARIOS DE TEST POUR LE DASHBOARD
+==================================================
+
+SCÉNARIO 1: Analyse Mensuelle
+------------------------------
+Description: Filtrer les données du mois le plus actif
+Filtre période: Mois avec le plus d'inscriptions
+Filtre pays: Tous
+Filtre pack: Tous
+Objectif: Identifier les tendances du mois le plus actif
+
+SCÉNARIO 2: Focus Géographique
+------------------------------
+Description: Analyser un pays spécifique sur toute la période
+Filtre période: Toute la période
+Filtre pays: Cameroun
+Filtre pack: Tous
+Objectif: Comprendre le comportement d'un marché spécifique
+
+SCÉNARIO 3: Analyse Produit
+------------------------------
+Description: Étudier les utilisateurs d'un pack premium
+Filtre période: Toute la période
+Filtre pays: Tous
+Filtre pack: Premium
+Objectif: Profiler les utilisateurs premium
+
+SCÉNARIO 4: Tendances Récentes
+------------------------------
+Description: Analyser les 30 derniers jours
+Filtre période: 30 derniers jours
+Filtre pays: Tous
+Filtre pack: Tous
+Objectif: Identifier les tendances récentes
+
+SCÉNARIO 5: Analyse Croisée
+------------------------------
+Description: Pack Essentiel au Cameroun
+Filtre période: Toute la période
+Filtre pays: Cameroun
+Filtre pack: Essentiel
+Objectif: Analyse détaillée d'un segment spécifique
+
