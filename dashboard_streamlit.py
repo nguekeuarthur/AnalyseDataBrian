@@ -19,7 +19,7 @@ from streamlit_folium import st_folium
 
 # Configuration de la page AMÉLIORÉE
 st.set_page_config(
-    page_title="📊 Analyse du Formulaire - Dashboard Pro",
+    page_title=" Analyse du Formulaire - Dashboard Pro",
     page_icon="📊",
     layout="wide",
     initial_sidebar_state="expanded",
@@ -81,6 +81,16 @@ def charger_donnees():
     try:
         df = pd.read_excel("Formulaire_FINAL_OPTIMISE.xlsx")
         
+        # Force la standardisation des noms de pays dès le chargement
+        pays_mapping = {
+            'Côte D\'Ivoire': 'Côte d\'Ivoire',
+            'Cote d\'Ivoire': 'Côte d\'Ivoire',
+            'Cote D\'Ivoire': 'Côte d\'Ivoire',
+            'COTE D\'IVOIRE': 'Côte d\'Ivoire',
+            'Côte d\'ivoire': 'Côte d\'Ivoire',
+            'Cote d\'ivoire': 'Côte d\'Ivoire'
+        }
+        
         # Nettoyage et validation des données
         # Convertir les dates
         if 'horodateur' in df.columns:
@@ -91,14 +101,18 @@ def charger_donnees():
         
         # Nettoyage des colonnes texte pour éviter les problèmes d'affichage
         if 'pays' in df.columns:
+            # 1. Convertir en string et nettoyer les espaces
             df['pays'] = df['pays'].astype(str).str.strip()
-            # CORRECTION: Exclure les valeurs numériques de la colonne pays
-            # Ces valeurs sont des erreurs de saisie (15000, 2005, etc.)
+            
+            # 2. Standardiser le nom de la Côte d'Ivoire avec le mapping défini
+            df['pays'] = df['pays'].replace(pays_mapping)
+            
+            # 3. Exclure les valeurs numériques
             mask_pays_valides = ~df['pays'].str.isdigit()
-            if not mask_pays_valides.all():
-                pays_invalides = df[~mask_pays_valides]['pays'].unique()
-                st.sidebar.warning(f"⚠️ Pays invalides exclus: {pays_invalides}")
-                df = df[mask_pays_valides].copy()
+            df = df[mask_pays_valides].copy()
+            
+            # 4. Dernière vérification pour uniformiser la casse
+            df['pays'] = df['pays'].str.title()
         
         if 'type_pack' in df.columns:
             df['type_pack'] = df['type_pack'].astype(str).str.strip()
@@ -153,11 +167,9 @@ def main():
     with col2:
         st.markdown("""
         <div style="text-align: center; margin-bottom: 2rem;">
-            <div style="font-size: 4rem; margin-bottom: 1rem;">📊</div>
+            <div style="font-size: 4rem; margin-bottom: 1rem;"></div>
             <h1 class="main-header">Dashboard d'Analyse du Formulaire</h1>
-            <p style="font-size: 1.2rem; color: #666; margin-top: 1rem;">
-                🚀 Analyse complète et interactive des données
-            </p>
+            
         </div>
         """, unsafe_allow_html=True)
     
@@ -172,7 +184,7 @@ def main():
     with st.sidebar:
         st.markdown("""
         <div style="text-align: center; padding: 1rem; background: linear-gradient(135deg, #1f77b4, #ff7f0e); border-radius: 12px; margin-bottom: 2rem;">
-            <h2 style="color: white; margin: 0;">🎛️ Centre de Contrôle</h2>
+            <h2 style="color: white; margin: 0;"> Centre de Contrôle</h2>
         </div>
         """, unsafe_allow_html=True)
         
@@ -204,7 +216,7 @@ def main():
     if 'horodateur' in df.columns and df['horodateur'].notna().any():
         st.markdown("""
         <div style="background: linear-gradient(135deg, #e3f2fd, #bbdefb); padding: 1rem; border-radius: 12px; margin: 1rem 0;">
-            <h3 style="color: #1976d2; margin: 0 0 1rem 0;">📅 Filtres de Période</h3>
+            <h3 style="color: #1976d2; margin: 0 0 1rem 0;"> Filtres de Période</h3>
         </div>
         """, unsafe_allow_html=True)
         
@@ -441,7 +453,7 @@ def main():
         with col1:
             st.markdown("""
             <div class="plot-container">
-                <h3 style="color: #1f77b4; text-align: center; margin-bottom: 1rem;">📊 Graphique en Camembert</h3>
+                <h3 style="color: #1f77b4; text-align: center; margin-bottom: 1rem;">  Graphique en Camembert</h3>
             </div>
             """, unsafe_allow_html=True)
             pack_counts = df_filtered['type_pack'].value_counts()
@@ -451,7 +463,7 @@ def main():
                     values=pack_counts.values,
                     names=pack_counts.index,
                     title="Répartition des Packs Choisis",
-                    color_discrete_sequence=px.colors.qualitative.Set3
+                    color_discrete_sequence=px.colors.qualitative.Bold  # Palette de couleurs vives et distinctes
                 )
                 fig_pie.update_traces(textposition='inside', textinfo='percent+label')
                 fig_pie.update_layout(
@@ -466,19 +478,24 @@ def main():
         with col2:
             st.markdown("""
             <div class="plot-container">
-                <h3 style="color: #1f77b4; text-align: center; margin-bottom: 1rem;">📊 Graphique en Barres</h3>
+                <h3 style="color: #1f77b4; text-align: center; margin-bottom: 1rem;"> Prix Moyen par Pack</h3>
             </div>
             """, unsafe_allow_html=True)
-            if len(pack_counts) > 0:
+            if len(pack_counts) > 0 and 'prix_pack_fcfa' in df_filtered.columns:
+                # Calculer le prix moyen par pack
+                prix_moyen_pack = df_filtered.groupby('type_pack')['prix_pack_fcfa'].mean().round(0)
+                
                 fig_bar = px.bar(
-                    x=pack_counts.values,
-                    y=pack_counts.index,
+                    x=prix_moyen_pack.values,
+                    y=prix_moyen_pack.index,
                     orientation='h',
-                    title="Nombre d'Inscrits par Pack",
-                    labels={'x': 'Nombre d\'inscrits', 'y': 'Type de Pack'},
-                    color=pack_counts.values,
-                    color_continuous_scale='Blues'
+                    title="Prix Moyen par Pack (FCFA)",
+                    labels={'x': 'Prix Moyen (FCFA)', 'y': 'Type de Pack'},
+                    color=prix_moyen_pack.index,
+                    color_discrete_sequence=px.colors.qualitative.Set1
                 )
+                # Formatter les valeurs sur les barres
+                fig_bar.update_traces(texttemplate='%{x:,.0f} FCFA', textposition='outside')
                 fig_bar.update_layout(
                     showlegend=False,
                     plot_bgcolor='rgba(0,0,0,0)',
@@ -490,7 +507,7 @@ def main():
         
         # Tableau détaillé
         if len(df_filtered) > 0 and 'prix_pack_fcfa' in df_filtered.columns:
-            st.markdown("### 📋 Détails par Pack")
+            st.markdown("###   Détails par Pack")
             pack_stats = df_filtered.groupby('type_pack').agg({
                 'type_pack': 'count',
                 'prix_pack_fcfa': ['mean', 'min', 'max']
@@ -509,7 +526,15 @@ def main():
         
         with col1:
             st.markdown("### 📊 Top 10 des Pays")
-            pays_counts = df_filtered['pays'].value_counts().head(10)
+            
+            # Copier le dataframe pour éviter de modifier l'original
+            df_pays = df_filtered.copy()
+            
+            # Regrouper explicitement toutes les variantes de Côte d'Ivoire
+            df_pays.loc[df_pays['pays'].str.contains('ivoire', case=False), 'pays'] = 'Côte d\'Ivoire'
+            
+            # Grouper et additionner les valeurs pour chaque pays
+            pays_counts = df_pays['pays'].value_counts().head(10)
             
             if len(pays_counts) > 0:
                 fig_geo = px.bar(
@@ -518,8 +543,8 @@ def main():
                     orientation='h',
                     title="Nombre de Participants par Pays",
                     labels={'x': 'Nombre de participants', 'y': 'Pays'},
-                    color=pays_counts.values,
-                    color_continuous_scale='Viridis'
+                    color=pays_counts.index,
+                    color_discrete_sequence=px.colors.qualitative.Pastel
                 )
                 fig_geo.update_layout(height=500)
                 st.plotly_chart(fig_geo, use_container_width=True)
@@ -588,8 +613,8 @@ def main():
                     y=paiement_counts.values,
                     title="Choix des Méthodes de Paiement",
                     labels={'x': 'Méthode de paiement', 'y': 'Nombre d\'utilisateurs'},
-                    color=paiement_counts.values,
-                    color_continuous_scale='Plasma'
+                    color=paiement_counts.index,  # Utiliser la méthode de paiement comme base pour la couleur
+                    color_discrete_sequence=px.colors.qualitative.G10  # Palette de couleurs vibrantes
                 )
                 fig_payment.update_xaxes(tickangle=45)
                 st.plotly_chart(fig_payment, use_container_width=True)
@@ -773,11 +798,11 @@ def main():
             <div style="margin-top: 2rem; padding-top: 1rem; border-top: 2px solid #e9ecef;">
                 <p style="color: #666; margin: 0;">
                     📅 Dernière mise à jour: {} | 
-                    ⚡ Version 2.0 - Design Pro | 
+                    ⚡ Version 2.0 | 
                     📧 Analyse complète des données formulaire
                 </p>
                 <p style="color: #999; font-size: 0.9rem; margin: 0.5rem 0 0 0;">
-                    Développé avec ❤️ par l'équipe analyse - Tous droits réservés
+                    Développé par Arthur Nguekeu - Tous droits réservés
                 </p>
             </div>
         </div>

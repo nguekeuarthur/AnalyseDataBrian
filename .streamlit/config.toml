@@ -1,9 +1,9 @@
 [theme]
 # Couleurs principales - Design moderne et professionnel
-primaryColor = "#1f77b4"           # Bleu principal pour les boutons et éléments interactifs
-backgroundColor = "#ffffff"        # Fond blanc propre
-secondaryBackgroundColor = "#f8f9fa"  # Gris très clair pour les sidebars
-textColor = "#262730"             # Gris foncé pour le texte
+primaryColor = "bleu"           # Bleu principal pour les boutons et éléments interactifs
+backgroundColor = "blanc"        # Fond blanc propre
+secondaryBackgroundColor = "gris-clair"  # Gris très clair pour les sidebars
+textColor = "gris-foncé"             # Gris foncé pour le texte
 
 # Police moderne
 font = "sans serif"
