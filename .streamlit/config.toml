@@ -8,31 +8,20 @@ textColor = "gris-foncé"             # Gris foncé pour le texte
 # Police moderne
 font = "sans serif"
 
-[global]
+[server]
+port = 8501
+address = "0.0.0.0"
+enableCORS = true
+enableXsrfProtection = true
+maxUploadSize = 200
 
-# By default, Streamlit checks if the Python watchdog module is available and, if not,
-# prints a warning asking for you to install it. The watchdog module is not required,
-# it's just used to make the run automagically when you save a file. This option
-# allows you to suppress that warning.
-disableWatchdogWarning = false
+[browser]
+serverAddress = "0.0.0.0"
+gatherUsageStats = false
 
-# By default, Streamlit displays a warning when a user sets both a widget default
-# value in the function defining the widget and a widget value via the widget's key
-# in `st.session_state`.
-showWarningOnDirectExecution = false
-
-[logger]
-
-# Level of logging: 'error', 'warning', 'info', or 'debug'.
-level = "info"
-
-[client]
-
-# Whether to enable st.cache.
-caching = true
-
-# If false, makes your Streamlit script not draw to a Streamlit app.
-displayEnabled = true
+[runner]
+magicEnabled = true
+fastReruns = true
 
 # Controls whether uncaught app exceptions are displayed in the browser. By
 # default, this is set to True and Streamlit displays app exceptions and
